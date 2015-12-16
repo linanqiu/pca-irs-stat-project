@@ -200,27 +200,29 @@ first_factor_10y$pc1 = -first_factor_10y$pc1
 p1 = ggplot() + geom_line(data=first_factor_10y, aes(x=as.Date(date), y=pc1), colour=gg_color_hue(1)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + xlab('Date') + ylab('left/red: PC1\nright/blue: 10y Yield')
 p2 = ggplot() + geom_line(data=first_factor_10y, aes(x=as.Date(date), y=y10), colour=gg_color_hue(2)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + theme(panel.background = element_rect(fill = NA))
 g = stack_plot(p1, p2)
+pdf("verify-first.pdf", width=10, height=5)
 grid.draw(g)
+dev.off()
 first_factor_cor = cor(first_factor_10y$pc1, first_factor_10y$y10)
 first_factor_cor
 
 # second factor analysis
 second_factor_10y2y = data.frame(rownames(scores), scores_dataframe$pc2, (last(pccurve10_2, 250)))
 colnames(second_factor_10y2y) = c('date', 'pc2', 'curve10y2y')
-# second_factor_10y2y$pc2 = -second_factor_10y2y$pc2
+second_factor_10y2y$pc2 = -second_factor_10y2y$pc2
 
 p1 = ggplot() + geom_line(data=second_factor_10y2y, aes(x=as.Date(date), y=pc2), colour=gg_color_hue(1)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + xlab('Date') + ylab('left/red: PC2\nright/blue: 10s2s Yield')
 p2 = ggplot() + geom_line(data=second_factor_10y2y, aes(x=as.Date(date), y=curve10y2y), colour=gg_color_hue(2)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + theme(panel.background = element_rect(fill = NA))
 g = stack_plot(p1, p2)
+pdf("verify-second.pdf", width=10, height=5)
 grid.draw(g)
+dev.off()
 second_factor_cor = cor(second_factor_10y2y$pc2, second_factor_10y2y$curve10y2y)
 second_factor_cor
 
 # third factor analysis
-butterfly2_10_30 = (DSWP10 - DSWP5) - (DSWP30 - DSWP10)
-butterfly2_10_30 = diff(butterfly2_10_30, lag=1)
-butterfly2_10_30 = butterfly2_10_30[!is.na(butterfly2_10_30)]
-butterfly2_10_30 = last(butterfly2_10_30, 250)
+butterfly2_10_30 = last((DSWP10 - DSWP5) - (DSWP30 - DSWP10), 250)
+butterfly2_10_30 = dailyReturn(butterfly2_10_30)
 third_factor_butterfly = data.frame(rownames(scores), scores_dataframe$pc3, butterfly2_10_30)
 colnames(third_factor_butterfly) = c('date', 'pc3', 'butterfly2y10y30y')
 third_factor_butterfly$pc3 = -third_factor_butterfly$pc3
@@ -228,6 +230,8 @@ third_factor_butterfly$pc3 = -third_factor_butterfly$pc3
 p1 = ggplot() + geom_line(data=third_factor_butterfly, aes(x=as.Date(date), y=pc3), colour=gg_color_hue(1)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + xlab('Date') + ylab('left/red: PC3\nright/blue: 2s10s30s Yield')
 p2 = ggplot() + geom_line(data=third_factor_butterfly, aes(x=as.Date(date), y=butterfly2y10y30y), colour=gg_color_hue(2)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + theme(panel.background = element_rect(fill = NA))
 g = stack_plot(p1, p2)
+pdf("verify-third.pdf", width=10, height=5)
 grid.draw(g)
+dev.off()
 third_factor_cor = cor(third_factor_butterfly$pc3, third_factor_butterfly$butterfly2y10y30y)
 third_factor_cor
